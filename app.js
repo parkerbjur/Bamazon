@@ -1,5 +1,5 @@
 const mysql = require("mysql");
-const prompts = require("prompts")
+const prompts = require("prompts");
 
 const connection = mysql.createConnection({
     host: "localhost",
@@ -7,24 +7,42 @@ const connection = mysql.createConnection({
     user: "webuser",
     password: "password",
     database: "bamazon"
-})
+});
 
-const askQuestions = async () => {
+const permissions = async () => {
     let questions = [
         {
-            type: "number",
-            name: "id",
-            message: "what product would you like?",
-        },
-        {
-            type: "number",
-            name: "quantity",
-            message: "How many would you like?"
+            type: "multiselect",
+            name: "permisions",
+            message: "What are you",
+            choices: [
+                { title: 'Manager', value: 'manager' },
+                { title: 'Customer', value: 'customer' }
+            ],
         }
     ]
     let response = await prompts(questions);
-    handleRequest(response.id, response.quantity);
+    let permisions = (response.permisions[0])
+    console.log(permisions);
+    askQuestions(permissions);
 }
+
+const askQuestions = async (permissions) => {
+        let questions = [
+            {
+                type: "number",
+                name: "id",
+                message: "what product would you like?",
+            },
+            {
+                type: "number",
+                name: "quantity",
+                message: "How many would you like?"
+            }
+        ]
+        let response = await prompts(questions);
+        handleRequest(response.id, response.quantity);
+};
 
 function handleRequest(id, amount){
     connection.query("select * from products where item_id = " + id, function(err, res){
@@ -54,3 +72,4 @@ function returnCost(price, amount){
 }
 
 askQuestions();
+// permissions();
